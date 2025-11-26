@@ -1,3 +1,4 @@
+// pages/StudentPage.tsx
 import { useState, useMemo } from "react";
 import { useStudent } from "../hooks/useStudent";
 import { StudentTable } from "../components/StudentTable";
@@ -12,15 +13,14 @@ export const StudentPage = () => {
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filtered by search
   const filteredStudents = useMemo(() => {
-    return students.filter(s =>
-      s.name.toLowerCase().includes(query.toLowerCase()) ||
-      s.address.toLowerCase().includes(query.toLowerCase())
+    return students.filter(
+      (s) =>
+        s.name.toLowerCase().includes(query.toLowerCase()) ||
+        s.address.toLowerCase().includes(query.toLowerCase())
     );
   }, [students, query]);
 
-  // Pagination
   const pageCount = Math.ceil(filteredStudents.length / PAGE_SIZE);
   const paginatedStudents = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -37,67 +37,129 @@ export const StudentPage = () => {
     setForm({ name: "", age: 0, address: "" });
   };
 
-  const handleEdit = (s: typeof form & { id?: number }) => {
-    setEditingId(s.id!);
+  const handleEdit = (s: any) => {
+    setEditingId(s.id);
     setForm({ name: s.name, age: s.age, address: s.address });
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   return (
-    <div className="max-w-5xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Student Management</h1>
+    <div className="container">
+      <div className="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Student Management</h1>
+        </div>
 
-      {/* Form */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <input
-          className="border rounded px-4 py-2 flex-1 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          placeholder="Name"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-        />
-        <input
-          type="number"
-          className="border rounded px-4 py-2 w-24 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          placeholder="Age"
-          value={form.age}
-          onChange={e => setForm({ ...form, age: Number(e.target.value) })}
-        />
-        <input
-          className="border rounded px-4 py-2 flex-1 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          placeholder="Address"
-          value={form.address}
-          onChange={e => setForm({ ...form, address: e.target.value })}
-        />
-        <button
-          className={`px-6 py-2 rounded text-white ${editingId === null ? "bg-blue-500 hover:bg-blue-600" : "bg-green-500 hover:bg-green-600"} transition`}
-          onClick={handleAddOrUpdate}
-        >
-          {editingId === null ? "Add Student" : "Update Student"}
-        </button>
-      </div>
+        {/* Form Section */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className=" md:flex-row gap-4 ">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <input
+                className="w-8/12 border rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Enter student name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
 
-      {/* Search */}
-      <SearchBar query={query} setQuery={setQuery} />
+            <div className="w-24">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+              <input
+                type="number"
+                className="w-8/12 border rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Age"
+                value={form.age}
+                onChange={(e) =>
+                  setForm({ ...form, age: Number(e.target.value) })
+                }
+              />
+            </div>
 
-      {/* Table */}
-      <StudentTable students={paginatedStudents} onEdit={handleEdit} onDelete={remove} />
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <input
+                className="w-8/12 border rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                placeholder="Enter address"
+                value={form.address}
+                onChange={(e) => setForm({ ...form, address: e.target.value })}
+              />
+            </div>
 
-      {/* Pagination */}
-      <div className="flex justify-center mt-4 gap-2">
-        {Array.from({ length: pageCount }, (_, i) => i + 1).map(page => (
-          <button
-            key={page}
-            className={`px-3 py-1 rounded ${
-              page === currentPage ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            } transition`}
-            onClick={() => handlePageChange(page)}
-          >
-            {page}
-          </button>
-        ))}
+            <button
+              className="px-4 py-1 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 transition text-sm"
+              onClick={handleAddOrUpdate}
+            >
+              {editingId === null ? "Add Student" : "Update Student"}
+            </button>
+
+          </div>
+        </div>
+
+        {/* Search Bar Section */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">Search Students</h2>
+          <SearchBar query={query} setQuery={setQuery} />
+        </div>
+
+        {/* Table Section */}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <h2 className="text-xl font-semibold p-6 text-gray-700">Student List</h2>
+          <StudentTable
+            students={paginatedStudents}
+            onEdit={handleEdit}
+            onDelete={remove}
+          />
+
+          {/* Pagination */}
+          <div className="p-6 flex justify-center items-center gap-2">
+            <button
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(1)}
+            >
+              First
+            </button>
+
+            <button
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Prev
+            </button>
+
+            {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                className={`px-3 py-1 rounded transition ${
+                  page === currentPage
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+              disabled={currentPage === pageCount}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Next
+            </button>
+
+            <button
+              className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
+              disabled={currentPage === pageCount}
+              onClick={() => setCurrentPage(pageCount)}
+            >
+              Last
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

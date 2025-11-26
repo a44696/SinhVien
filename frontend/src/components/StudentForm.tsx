@@ -13,6 +13,12 @@ export default function StudentForm({ onSubmit, editingStudent }: Props) {
     address: "",
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    age: "",
+    address: "",
+  });
+
   useEffect(() => {
     if (editingStudent) {
       setForm(editingStudent);
@@ -20,11 +26,31 @@ export default function StudentForm({ onSubmit, editingStudent }: Props) {
   }, [editingStudent]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    // Xóa lỗi khi user bắt đầu gõ lại
+    setErrors({ ...errors, [name]: "" });
+  };
+
+  const validate = () => {
+    let temp: any = {};
+
+    temp.name = form.name.trim() === "" ? "Tên không được để trống" : "";
+    temp.age = form.age <= 0 ? "Tuổi phải lớn hơn 0" : "";
+    temp.address = form.address.trim() === "" ? "Địa chỉ không được để trống" : "";
+
+    setErrors(temp);
+
+    // Nếu tất cả lỗi đều rỗng → valid
+    return Object.values(temp).every(x => x === "");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validate()) return;
+
     onSubmit(form);
     setForm({ name: "", age: 0, address: "" });
   };
@@ -32,35 +58,51 @@ export default function StudentForm({ onSubmit, editingStudent }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-4 rounded shadow mb-4 grid grid-cols-3 gap-4"
+      className="bg-white p-4 rounded shadow mb-4 grid grid-cols-3 gap-4 "
     >
-      <input
-        name="name"
-        placeholder="Tên"
-        value={form.name}
-        onChange={handleChange}
-        className="border p-2"
-        required
-      />
-      <input
-        name="age"
-        placeholder="Tuổi"
-        type="number"
-        value={form.age}
-        onChange={handleChange}
-        className="border p-2"
-      />
-      <input
-        name="address"
-        placeholder="Địa chỉ"
-        value={form.address}
-        onChange={handleChange}
-        className="border p-2"
-      />
+      {/* Name */}
+      <div className="flex flex-col ">
+        <input
+          name="name"
+          placeholder="Tên"
+          value={form.name}
+          onChange={handleChange}
+          className={` border p-2 ${errors.name ? "border-red-500" :  "" }`}
+        />
+        {errors.name && <span className="text-red-500 text-sm">{errors.name}</span>}
+      </div>
 
-      <button className="col-span-3 bg-blue-600 text-white py-2 rounded">
-        {editingStudent ? "Cập nhật" : "Thêm mới"}
-      </button>
+      {/* Age */}
+      <div className="flex flex-col">
+        <input
+          name="age"
+          placeholder="Tuổi"
+          type="number"
+          value={form.age}
+          onChange={handleChange}
+          className={`border p-2 ${errors.age ? "border-red-500" : ""}`}
+        />
+        {errors.age && <span className="text-red-500 text-sm">{errors.age}</span>}
+      </div>
+
+      {/* Address */}
+      <div className="flex flex-col">
+        <input
+          name="address"
+          placeholder="Địa chỉ"
+          value={form.address}
+          onChange={handleChange}
+          className={`border p-2 ${errors.address ? "border-red-500" : ""}`}
+        />
+        {errors.address && <span className="text-red-500 text-sm">{errors.address}</span>}
+      </div>
+
+      {/* Submit */}
+      <div className="w-8/12">
+        <button className="col-span-3 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition ">
+          {editingStudent ? "Cập nhật" : "Thêm mới"}
+        </button>
+      </div>
     </form>
   );
 }

@@ -1,4 +1,6 @@
+// components/StudentTable.tsx
 import type { Student } from "../types/Student";
+import { Pencil, Trash } from "lucide-react";
 
 interface Props {
   students: Student[];
@@ -8,40 +10,57 @@ interface Props {
 
 export const StudentTable = ({ students, onEdit, onDelete }: Props) => {
   return (
-    <div className="overflow-x-auto shadow-md rounded-lg">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-            <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+    <div className="overflow-x-auto border rounded-lg shadow bg-white">
+      <table className="w-full text-left border-collapse">
+        <thead>
+          <tr className="bg-gray-100 text-gray-700">
+            <th className="p-3 border-b">ID</th>
+            <th className="p-3 border-b">Name</th>
+            <th className="p-3 border-b">Age</th>
+            <th className="p-3 border-b">Address</th>
+            <th className="p-3 border-b text-center">Actions</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {students.map(s => (
-            <tr key={s.id} className="hover:bg-gray-50 transition">
-              <td className="px-6 py-4 whitespace-nowrap">{s.id}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{s.name}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{s.age}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{s.address}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-center flex justify-center gap-2">
-                <button
-                  className="bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-500 transition"
-                  onClick={() => onEdit(s)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
-                  onClick={() => onDelete(s.id!)}
-                >
-                  Delete
-                </button>
+
+        <tbody>
+          {students.map((s, i) => (
+            <tr
+              key={s.id}
+              className={`${i % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-blue-50 transition`}
+            >
+              <td className="p-3 border-b">{s.id}</td>
+              <td className="p-3 border-b">{s.name}</td>
+              <td className="p-3 border-b">{s.age}</td>
+              <td className="p-3 border-b">{s.address}</td>
+              <td className="p-3 border-b text-center">
+                <div className="flex justify-center gap-3">
+                  <button
+                    onClick={() => onEdit(s)}
+                    className="text-blue-600 hover:text-blue-800 transition"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button
+                    onClick={() => onDelete(s.id!)}
+                    className="text-red-600 hover:text-red-800 transition"
+                  >
+                    <Trash size={18} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
+
+          {students.length === 0 && (
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center p-5 text-gray-500 italic"
+              >
+                No data found...
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
