@@ -19,7 +19,8 @@ export const SearchBar = ({ query, setQuery }: Props) => {
           placeholder="Search student..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="border rounded-lg px-10 py-2 w-full shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="border rounded-lg px-10 py-2 w-full 
+          shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>
     </div>

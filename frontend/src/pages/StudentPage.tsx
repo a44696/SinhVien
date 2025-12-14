@@ -12,6 +12,7 @@ export const StudentPage = () => {
   const [form, setForm] = useState({ name: "", age: 0, address: "" });
   const [query, setQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredStudents = useMemo(() => {
     return students.filter(
@@ -52,11 +53,11 @@ export const StudentPage = () => {
 
         {/* Form Section */}
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className=" md:flex-row gap-4 ">
-            <div className="flex-1">
+          <div className="  ">
+            <div className="mb-3 ">
               <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
               <input
-                className="w-8/12 border rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                className="w-full border rounded-lg px-4 py-2 shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
                 placeholder="Enter student name"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}

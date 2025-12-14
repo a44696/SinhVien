@@ -58,10 +58,10 @@ export default function StudentForm({ onSubmit, editingStudent }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-4 rounded shadow mb-4 grid grid-cols-3 gap-4 "
+      className="bg-white p-4 rounded shadow mb-4  gap-4 "
     >
       {/* Name */}
-      <div className="flex flex-col ">
+      <div className=" ">
         <input
           name="name"
           placeholder="Tên"
@@ -73,7 +73,7 @@ export default function StudentForm({ onSubmit, editingStudent }: Props) {
       </div>
 
       {/* Age */}
-      <div className="flex flex-col">
+      <div className="">
         <input
           name="age"
           placeholder="Tuổi"
@@ -86,7 +86,7 @@ export default function StudentForm({ onSubmit, editingStudent }: Props) {
       </div>
 
       {/* Address */}
-      <div className="flex flex-col">
+      <div className="">
         <input
           name="address"
           placeholder="Địa chỉ"
