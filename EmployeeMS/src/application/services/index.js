@@ -1,3 +1,5 @@
 export { AdminService } from './AdminService';
-export { EmployeeService } from './EmployeeService';
 export { CategoryService } from './CategoryService';
+export { EmployeeService } from './EmployeeService';
+export { DepartmentService } from './DepartmentService';
+export { SalaryService } from './SalaryService';

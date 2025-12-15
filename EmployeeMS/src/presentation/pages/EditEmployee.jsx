@@ -4,6 +4,7 @@ import { EmployeeService, CategoryService } from '../../application/services'
 
 const employeeService = new EmployeeService();
 const categoryService = new CategoryService();
+const departmentService = new DepartmentService();
 
 const EditEmployee = () => {
   const { id } = useParams()
@@ -13,8 +14,10 @@ const EditEmployee = () => {
     salary: "",
     address: "",
     category_id: "",
+    department_id: ""
   });
   const [category, setCategory] = useState([])
+  const [departments, setDepartments] = useState([]);
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -24,8 +27,12 @@ const EditEmployee = () => {
   const loadData = async () => {
     try {
       const catResult = await categoryService.getAllCategories();
+      const deptResult = await departmentService.getAllDepartments();
       if (catResult.Status) {
         setCategory(catResult.Result);
+      }
+      if (deptResult.Status) {
+        setDepartments(deptResult.Result);
       }
 
       const empResult = await employeeService.getEmployeeById(id);
@@ -36,6 +43,7 @@ const EditEmployee = () => {
           address: empResult.Result[0].address,
           salary: empResult.Result[0].salary,
           category_id: empResult.Result[0].category_id,
+          department_id: empResult.Result[0].department_id
         })
       }
     } catch (err) {
@@ -135,6 +143,18 @@ const EditEmployee = () => {
               <option value="">Select Category</option>
               {category.map((c) => {
                 return <option key={c.id} value={c.id}>{c.name}</option>;
+              })}
+            </select>
+          </div>
+          <div className="col-12">
+            <label htmlFor="department" className="form-label">
+              Department
+            </label>
+            <select name="department" id="department" className="form-select" value={employee.department_id}
+              onChange={(e) => setEmployee({ ...employee, department_id: e.target.value })}>
+              <option value="">Select department</option>
+              {departments.map((d) => {
+                return <option key={d.id} value={d.id}>{d.name}</option>;
               })}
             </select>
           </div>

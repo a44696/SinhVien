@@ -60,6 +60,24 @@ const DashBoard = () => {
               </li>
               <li className="w-100">
                 <Link
+                  to="/dashboard/department"
+                  className="nav-link px-0 align-middle text-white"
+                >
+                  <i className="fs-4 bi-building ms-2"></i>
+                  <span className="ms-2 d-none d-sm-inline">Department</span>
+                </Link>
+              </li>
+              <li className="w-100">
+                <Link
+                  to="/dashboard/salary"
+                  className="nav-link px-0 align-middle text-white"
+                >
+                  <i className="fs-4 bi-cash-coin ms-2"></i>
+                  <span className="ms-2 d-none d-sm-inline">Salary</span>
+                </Link>
+              </li>
+              <li className="w-100">
+                <Link
                   to="/dashboard/profile"
                   className="nav-link px-0 align-middle text-white"
                 >
