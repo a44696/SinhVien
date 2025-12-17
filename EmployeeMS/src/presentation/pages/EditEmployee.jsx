@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { EmployeeService, CategoryService } from '../../application/services'
+import { EmployeeService, CategoryService, DepartmentService } from '../../application/services'
 
 const employeeService = new EmployeeService();
 const categoryService = new CategoryService();

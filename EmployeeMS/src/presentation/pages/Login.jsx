@@ -18,6 +18,7 @@ export const Login = () => {
     try {
       const result = await adminService.login(values.email, values.password);
       if (result.LoginStatus) {
+        localStorage.setItem("valid", true);
         navigate('/dashboard');
       } else {
         setError(result.message);

@@ -330,4 +330,17 @@ router.get('/salary_sum', (req, res) => {
     })
 })
 
+router.get('/verify', (req, res) => {
+    const token = req.cookies.token;
+    if(!token) {
+        return res.json({Status: false});
+    }
+    jwt.verify(token, "jwt_secret_key", (err, decoded) => {
+        if(err) {
+            return res.json({Status: false});
+        }
+        return res.json({Status: true, role: decoded.role, id: decoded.id});
+    });
+});
+
 export { router as AdminRoute };
