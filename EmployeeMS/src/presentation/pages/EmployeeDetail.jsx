@@ -6,11 +6,22 @@ const EmployeeDetail = () => {
     const [employee, setEmployee] = useState({})
     const {id} = useParams()
     const navigate = useNavigate()
+    const [showEditModal, setShowEditModal] = useState(false)
+    const [editData, setEditData] = useState({
+        name: '',
+        email: '',
+        address: ''
+    })
     
     useEffect(() => {
         axios.get('http://localhost:3000/employee/detail/'+id)
         .then(result => {
             setEmployee(result.data[0])
+            setEditData({
+                name: result.data[0].name,
+                email: result.data[0].email,
+                address: result.data[0].address
+            })
         })
         .catch(err => console.log(err))
     }, [id])
@@ -23,6 +34,37 @@ const EmployeeDetail = () => {
             navigate('/')
           }
         }).catch(err => console.log(err))
+    }
+
+    const handleEditClick = () => {
+        setEditData({
+            name: employee.name,
+            email: employee.email,
+            address: employee.address
+        })
+        setShowEditModal(true)
+    }
+
+    const handleEditSubmit = () => {
+        if(!editData.name || !editData.email || !editData.address) {
+            alert('Vui lòng điền tất cả các trường')
+            return
+        }
+        
+        axios.put('http://localhost:3000/employee/edit_profile/'+id, editData)
+        .then(result => {
+            if(result.data.Status) {
+                alert('Cập nhật thông tin thành công')
+                setEmployee({...employee, ...editData})
+                setShowEditModal(false)
+            } else {
+                alert(result.data.Error)
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            alert('Lỗi cập nhật thông tin')
+        })
     }
 
     return (
@@ -151,13 +193,9 @@ const EmployeeDetail = () => {
 
                                 {/* Action Buttons */}
                                 <div className="d-flex gap-3 justify-content-center">
-                                    <button className="btn btn-primary px-4 py-2">
+                                    <button className="btn btn-primary px-4 py-2" onClick={handleEditClick}>
                                         <i className="bi bi-pencil-square me-2"></i>
                                         Edit Profile
-                                    </button>
-                                    <button className="btn btn-outline-secondary px-4 py-2">
-                                        <i className="bi bi-clock-history me-2"></i>
-                                        View History
                                     </button>
                                 </div>
                             </div>
@@ -190,6 +228,60 @@ const EmployeeDetail = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Edit Modal */}
+            {showEditModal && (
+                <>
+                    <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-modal="true">
+                        <div className="modal-dialog modal-dialog-centered" role="document">
+                            <div className="modal-content">
+                                <div className="modal-header">
+                                    <h5 className="modal-title">Edit Profile</h5>
+                                    <button type="button" className="btn-close" onClick={() => setShowEditModal(false)}></button>
+                                </div>
+                                <div className="modal-body">
+                                    <div className="mb-3">
+                                        <label className="form-label">Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={editData.name}
+                                            onChange={(e) => setEditData({...editData, name: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Email</label>
+                                        <input
+                                            type="email"
+                                            className="form-control"
+                                            value={editData.email}
+                                            onChange={(e) => setEditData({...editData, email: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label className="form-label">Address</label>
+                                        <textarea
+                                            className="form-control"
+                                            rows="3"
+                                            value={editData.address}
+                                            onChange={(e) => setEditData({...editData, address: e.target.value})}
+                                        ></textarea>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>
+                                        Cancel
+                                    </button>
+                                    <button type="button" className="btn btn-primary" onClick={handleEditSubmit}>
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop fade show" onClick={() => setShowEditModal(false)}></div>
+                </>
+            )}
         </div>
     )
 }

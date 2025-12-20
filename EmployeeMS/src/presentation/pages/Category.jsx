@@ -153,102 +153,118 @@ const Category = () => {
     <div className="px-5 mt-3">
 
       {/* Filter + Action bar */}
-      <div className="d-flex align-items-end flex-wrap gap-3 mb-4 mt-5">
-        <h4>Position List</h4>
-        <div style={{ minWidth: 320 }} className="ml-72">
-          <select
-            id="departmentFilter"
-            className="form-select"
-            value={selectedDepartment}
-            onChange={handleDepartmentFilter}
-          >
-            <option value="">All Departments</option>
-            {departments.map((dept) => (
-              <option key={dept.id} value={dept.id}>
-                {dept.name}
-              </option>
-            ))}
-          </select>
+      <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
+        <h4 className="mb-0">Position List</h4>
+        <div className="d-flex align-items-center gap-3">
+          <div style={{ minWidth: 320 }}>
+            <select
+              id="departmentFilter"
+              className="form-select"
+              value={selectedDepartment}
+              onChange={handleDepartmentFilter}
+            >
+              <option value="">All Departments</option>
+              {departments.map((dept) => (
+                <option key={dept.id} value={dept.id}>
+                  {dept.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button className="btn btn-primary" onClick={openAddModal}>
+            <i className="bi bi-plus-circle me-1"></i>
+            Add Position
+          </button>
         </div>
-
-        <button className="btn btn-primary" onClick={openAddModal}>
-          + Add Position
-        </button>
       </div>
 
-      {/* List */}
-      <div className="mt-2">
-        
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Position Name</th>
-              <th>Department</th>
-              <th>Employee Count</th>
-              <th style={{ width: 180 }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((cat) => (
-              <React.Fragment key={cat.id}>
+      {/* Table Card */}
+      <div className="mt-4 card shadow-sm">
+        <div className="card-body p-0">
+          <div className="table-responsive">
+            <table className="table table-hover table-striped mb-0">
+              <thead className="">
                 <tr>
-                  <td>{cat.id}</td>
-                  <td>
-                    <button
-                      className="btn btn-link p-0"
-                      onClick={() => toggleEmployeeList(cat.id)}
-                    >
-                      {cat.name} {expandedCategory === cat.id ? "▼" : "▶"}
-                    </button>
-                  </td>
-                  <td>{cat.department_name}</td>
-                  <td>{cat.employee_count}</td>
-                  <td>
-                    <button
-                      className="btn btn-info btn-sm me-2"
-                      onClick={() => openEditModal(cat)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-warning btn-sm"
-                      onClick={() => handleDelete(cat.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+                  <th className="px-4 py-3">ID</th>
+                  <th className="px-4 py-3">Position Name</th>
+                  <th className="px-4 py-3">Department</th>
+                  <th className="px-4 py-3">Employee Count</th>
+                  <th className="px-4 py-3 text-center">Actions</th>
                 </tr>
+              </thead>
+              <tbody>
+                {categories.map((cat) => (
+                  <React.Fragment key={cat.id}>
+                    <tr>
+                      <td className="px-4 py-3 align-middle">{cat.id}</td>
+                      <td className="px-4 py-3 align-middle">
+                        <button
+                          className="btn btn-link p-0 text-decoration-none"
+                          onClick={() => toggleEmployeeList(cat.id)}
+                        >
+                          <i className={`bi ${expandedCategory === cat.id ? "bi-chevron-down" : "bi-chevron-right"} me-2`}></i>
+                          {cat.name}
+                        </button>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <span className="badge bg-secondary">{cat.department_name}</span>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <span className="badge bg-success">{cat.employee_count}</span>
+                      </td>
+                      <td className="px-4 py-3 align-middle text-center">
+                        <button
+                          className="btn btn-sm btn-outline-info me-2"
+                          onClick={() => openEditModal(cat)}
+                        >
+                          <i className="bi bi-pencil-square me-1"></i>
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => handleDelete(cat.id)}
+                        >
+                          <i className="bi bi-trash-fill me-1"></i>
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
 
-                {expandedCategory === cat.id && categoryEmployees[cat.id] && (
+                    {expandedCategory === cat.id && categoryEmployees[cat.id] && (
+                      <tr>
+                        <td colSpan="5" className="bg-light">
+                          <div className="p-3">
+                            <strong>
+                              <i className="bi bi-people me-2 text-primary"></i>
+                              Employees in this position:
+                            </strong>
+                            <ul className="mt-2 mb-0">
+                              {categoryEmployees[cat.id].length > 0 ? (
+                                categoryEmployees[cat.id].map((emp) => (
+                                  <li key={emp.id}>{emp.name}</li>
+                                ))
+                              ) : (
+                                <li className="text-muted">No employees in this position</li>
+                              )}
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                ))}
+                {categories.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="bg-light">
-                      <div className="p-3">
-                        <strong>Employees in this position:</strong>
-                        <ul className="mt-2">
-                          {categoryEmployees[cat.id].length > 0 ? (
-                            categoryEmployees[cat.id].map((emp) => (
-                              <li key={emp.id}>{emp.name}</li>
-                            ))
-                          ) : (
-                            <li>No employees in this position</li>
-                          )}
-                        </ul>
-                      </div>
+                    <td colSpan="5" className="text-center py-5 text-muted">
+                      <i className="bi bi-inbox fs-1 d-block mb-2"></i>
+                      <p className="mb-0">No data</p>
                     </td>
                   </tr>
                 )}
-              </React.Fragment>
-            ))}
-            {categories.length === 0 && (
-              <tr>
-                <td colSpan="5" className="text-center text-muted py-4">
-                  No data
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Modal */}

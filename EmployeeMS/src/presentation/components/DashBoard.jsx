@@ -8,7 +8,7 @@ const DashBoard = () => {
   const handleLogout = () => {
     if (window.confirm('Bạn có chắc chắn muốn đăng xuất?')) {
       localStorage.removeItem('token')
-      navigate('/adminlogin')
+      navigate('/')
     }
   }
 
@@ -74,6 +74,15 @@ const DashBoard = () => {
                 >
                   <i className="fs-4 bi-cash-coin ms-2"></i>
                   <span className="ms-2 d-none d-sm-inline">Salary</span>
+                </Link>
+              </li>
+              <li className="w-100">
+                <Link
+                  to="/dashboard/leave_requests"
+                  className="nav-link px-0 align-middle text-white"
+                >
+                  <i className="fs-4 bi-calendar-x ms-2"></i>
+                  <span className="ms-2 d-none d-sm-inline">Leave Requests</span>
                 </Link>
               </li>
               <li className="w-100">

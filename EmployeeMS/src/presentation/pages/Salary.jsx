@@ -13,6 +13,10 @@ const Salary = () => {
   const [amount, setAmount] = useState("");
   const [effectiveDate, setEffectiveDate] = useState("");
 
+  // filter state
+  const [minSalary, setMinSalary] = useState("");
+  const [maxSalary, setMaxSalary] = useState("");
+
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
 
@@ -104,6 +108,16 @@ const Salary = () => {
     if (!employeeId) return null;
     return salaryByEmployeeId.get(String(employeeId)) || null;
   }, [salaryByEmployeeId, employeeId]);
+
+  // Filter salaries by salary range
+  const filteredSalaries = useMemo(() => {
+    return salaries.filter((sal) => {
+      const salAmount = Number(sal.amount ?? 0);
+      const min = minSalary ? Number(minSalary) : 0;
+      const max = maxSalary ? Number(maxSalary) : Infinity;
+      return salAmount >= min && salAmount <= max;
+    });
+  }, [salaries, minSalary, maxSalary]);
 
   const onEmployeeChange = (e) => {
     const id = e.target.value;
@@ -197,61 +211,96 @@ const Salary = () => {
         </div>
       )}
 
-      <div className="d-flex justify-content-center">
-        <h3>Salary Management</h3>
-      </div>
-
       {/* Header row: title + add button */}
-      <div className="mt-4 d-flex align-items-center justify-content-between">
+      <div className="mt-5 d-flex align-items-center justify-content-between mb-4 ">
         <h4 className="m-0">Salary List</h4>
-        <button className="btn btn-primary" onClick={openAddModal}>
-          + Add Salary
-        </button>
+        <div className="d-flex align-items-center gap-2">
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Min Salary"
+            value={minSalary}
+            onChange={(e) => setMinSalary(e.target.value)}
+            style={{ width: 140 }}
+          />
+          <span className="text-muted">-</span>
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Max Salary"
+            value={maxSalary}
+            onChange={(e) => setMaxSalary(e.target.value)}
+            style={{ width: 140 }}
+          />
+          <button className="btn btn-primary" onClick={openAddModal}>
+            <i className="bi bi-plus-circle me-1"></i>
+            Add Salary
+          </button>
+        </div>
       </div>
 
-      {/* Table */}
-      <div className="mt-3">
-        <table className="table">
-          <thead>
-            <tr>
-              <th style={{ width: 80 }}>ID</th>
-              <th>Employee Name</th>
-              <th>Position</th>
-              <th>Department</th>
-              <th style={{ width: 130 }}>Salary</th>
-              <th style={{ width: 160 }}>Effective Date</th>
-              <th style={{ width: 180 }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {salaries.map((sal) => (
-              <tr key={sal.id}>
-                <td>{sal.id}</td>
-                <td>{sal.employee_name}</td>
-                <td>{sal.category_name}</td>
-                <td>{sal.department_name}</td>
-                <td>${Number(sal.amount ?? 0).toFixed(2)}</td>
-                <td>{sal.effective_date ? new Date(sal.effective_date).toLocaleDateString() : ""}</td>
-                <td>
-                  <button className="btn btn-info btn-sm me-2" onClick={() => openEditModal(sal)}>
-                    Edit
-                  </button>
-                  <button className="btn btn-warning btn-sm" onClick={() => handleDelete(sal.id)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+      {/* Table Card */}
+      <div className="card shadow-sm">
+        <div className="card-body p-0">
+          <div className="table-responsive">
+            <table className="table table-hover table-striped mb-0">
+              <thead className="">
+                <tr>
+                  <th className="px-4 py-3" style={{ width: 80 }}>ID</th>
+                  <th className="px-4 py-3">Employee Name</th>
+                  <th className="px-4 py-3">Position</th>
+                  <th className="px-4 py-3">Department</th>
+                  <th className="px-4 py-3" style={{ width: 130 }}>Salary</th>
+                  <th className="px-4 py-3" style={{ width: 160 }}>Effective Date</th>
+                  <th className="px-4 py-3 text-center" style={{ width: 180 }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSalaries.map((sal) => (
+                  <tr key={sal.id}>
+                    <td className="px-4 py-3 align-middle">{sal.id}</td>
+                    <td className="px-4 py-3 align-middle fw-semibold">{sal.employee_name}</td>
+                    <td className="px-4 py-3 align-middle">
+                      <span className="badge bg-info text-dark">{sal.category_name}</span>
+                    </td>
+                    <td className="px-4 py-3 align-middle">
+                      <span className="badge bg-secondary">{sal.department_name}</span>
+                    </td>
+                    <td className="px-4 py-3 align-middle">
+                      <strong className="text-success">
+                        <i className="bi bi-cash-coin me-1"></i>
+                        ${Number(sal.amount ?? 0).toLocaleString()}
+                      </strong>
+                    </td>
+                    <td className="px-4 py-3 align-middle">
+                      <i className="bi bi-calendar me-2"></i>
+                      {sal.effective_date ? new Date(sal.effective_date).toLocaleDateString() : ""}
+                    </td>
+                    <td className="px-4 py-3 align-middle text-center" style={{ whiteSpace: 'nowrap' }}>
+                      <button className="btn btn-sm btn-outline-info me-2" onClick={() => openEditModal(sal)}>
+                        <i className="bi bi-pencil-square me-1"></i>
+                        Edit
+                      </button>
+                      <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(sal.id)}>
+                        <i className="bi bi-trash-fill me-1"></i>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
 
-            {salaries.length === 0 && (
-              <tr>
-                <td colSpan="7" className="text-center text-muted py-4">
-                  No data
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                {filteredSalaries.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="text-center py-5 text-muted">
+                      <i className="bi bi-inbox fs-1 d-block mb-2"></i>
+                      <p className="mb-0">No data</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Modal */}

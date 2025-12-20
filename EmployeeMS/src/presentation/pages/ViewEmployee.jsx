@@ -9,9 +9,11 @@ const ViewEmployee = () => {
   const [employee, setEmployee] = useState({
     name: "",
     email: "",
-    salary: "",
-    address: "",
+    department_id: "",
+    department_name: "",
     category_id: "",
+    category_name: "",
+    address: "",
     image: "",
   });
   const navigate = useNavigate()
@@ -28,8 +30,10 @@ const ViewEmployee = () => {
           name: result.Result[0].name,
           email: result.Result[0].email,
           address: result.Result[0].address,
-          salary: result.Result[0].salary,
+          department_id: result.Result[0].department_id,
+          department_name: result.Result[0].department_name,
           category_id: result.Result[0].category_id,
+          category_name: result.Result[0].category_name,
           image: result.Result[0].image,
         })
       }
@@ -76,16 +80,16 @@ const ViewEmployee = () => {
             <p className="form-control rounded-0 bg-light">{employee.email}</p>
           </div>
           <div className="col-12">
-            <label className="form-label fw-bold">Salary:</label>
-            <p className="form-control rounded-0 bg-light">${employee.salary}</p>
+            <label className="form-label fw-bold">Department:</label>
+            <p className="form-control rounded-0 bg-light">{employee.department_name}</p>
+          </div>
+          <div className="col-12">
+            <label className="form-label fw-bold">Position:</label>
+            <p className="form-control rounded-0 bg-light">{employee.category_name}</p>
           </div>
           <div className="col-12">
             <label className="form-label fw-bold">Address:</label>
             <p className="form-control rounded-0 bg-light">{employee.address}</p>
-          </div>
-          <div className="col-12">
-            <label className="form-label fw-bold">Category ID:</label>
-            <p className="form-control rounded-0 bg-light">{employee.category_id}</p>
           </div>
         </div>
 

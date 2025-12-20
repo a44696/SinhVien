@@ -96,8 +96,34 @@ router.get('/admin_count', (req, res) => {
     con.query(sql, (err, result) => {
         if(err) return res.json({Status: false, Error: "Query Error"})
         return res.json({Status: true, Result: result})
+    })})
+
+// ============ LEAVE REQUEST ROUTES ============
+router.get('/all_leave_requests', (req, res) => {
+    const sql = `
+        SELECT lr.*, e.name as employee_name 
+        FROM leave_request lr
+        LEFT JOIN employee e ON lr.employee_id = e.id
+        ORDER BY lr.created_at DESC
+    `;
+    con.query(sql, (err, result) => {
+        if(err) {
+            console.log(err);
+            return res.json({Status: false, Error: "Query Error"})
+        }
+        return res.json({Status: true, Result: result})
     })
-})
+});
+
+router.put('/leave_request/:id/status', (req, res) => {
+    const sql = "UPDATE leave_request SET status = ? WHERE id = ?";
+    con.query(sql, [req.body.status, req.params.id], (err, result) => {
+        if(err) {
+            console.log(err);
+            return res.json({Status: false, Error: "Query Error"})
+        }
+        return res.json({Status: true, Message: "Leave request status updated successfully"})
+    })})
 
 // ============ DEPARTMENT ROUTES ============
 router.get('/department', (req, res) => {

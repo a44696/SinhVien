@@ -11,10 +11,11 @@ const EditEmployee = () => {
   const [employee, setEmployee] = useState({
     name: "",
     email: "",
-    salary: "",
     address: "",
     category_id: "",
-    department_id: ""
+    category_name: "",
+    department_id: "",
+    department_name: ""
   });
   const [category, setCategory] = useState([])
   const [departments, setDepartments] = useState([]);
@@ -26,11 +27,7 @@ const EditEmployee = () => {
 
   const loadData = async () => {
     try {
-      const catResult = await categoryService.getAllCategories();
       const deptResult = await departmentService.getAllDepartments();
-      if (catResult.Status) {
-        setCategory(catResult.Result);
-      }
       if (deptResult.Status) {
         setDepartments(deptResult.Result);
       }
@@ -41,15 +38,45 @@ const EditEmployee = () => {
           name: empResult.Result[0].name,
           email: empResult.Result[0].email,
           address: empResult.Result[0].address,
-          salary: empResult.Result[0].salary,
           category_id: empResult.Result[0].category_id,
-          department_id: empResult.Result[0].department_id
-        })
+          category_name: empResult.Result[0].category_name,
+          department_id: empResult.Result[0].department_id,
+          department_name: empResult.Result[0].department_name
+        });
+        // Load categories for the current department
+        if (empResult.Result[0].department_id) {
+          loadCategories(empResult.Result[0].department_id);
+        }
       }
     } catch (err) {
       console.log(err);
     }
   }
+
+  const handleDepartmentChange = (deptId) => {
+    setEmployee({ ...employee, department_id: deptId, category_id: "", category_name: "" });
+    loadCategories(deptId);
+  };
+
+  const loadCategories = async (deptId) => {
+    try {
+      const result = await categoryService.getAllCategories(deptId);
+      if (result.Status) {
+        setCategory(result.Result);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handlePositionChange = (categoryId) => {
+    const selected = category.find(c => c.id === parseInt(categoryId));
+    setEmployee({ 
+      ...employee, 
+      category_id: categoryId,
+      category_name: selected?.name || ""
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -102,22 +129,6 @@ const EditEmployee = () => {
               }
             />
           </div>
-          <div className='col-12'>
-            <label htmlFor="inputSalary" className="form-label">
-              Salary
-            </label>
-            <input
-              type="text"
-              className="form-control rounded-0"
-              id="inputSalary"
-              placeholder="Enter Salary"
-              autoComplete="off"
-              value={employee.salary}
-              onChange={(e) =>
-                setEmployee({ ...employee, salary: e.target.value })
-              }
-            />
-          </div>
           <div className="col-12">
             <label htmlFor="inputAddress" className="form-label">
               Address
@@ -135,26 +146,27 @@ const EditEmployee = () => {
             />
           </div>
           <div className="col-12">
-            <label htmlFor="category" className="form-label">
-              Category
-            </label>
-            <select name="category" id="category" className="form-select" value={employee.category_id}
-              onChange={(e) => setEmployee({ ...employee, category_id: e.target.value })}>
-              <option value="">Select Category</option>
-              {category.map((c) => {
-                return <option key={c.id} value={c.id}>{c.name}</option>;
-              })}
-            </select>
-          </div>
-          <div className="col-12">
             <label htmlFor="department" className="form-label">
               Department
             </label>
             <select name="department" id="department" className="form-select" value={employee.department_id}
-              onChange={(e) => setEmployee({ ...employee, department_id: e.target.value })}>
+              onChange={(e) => handleDepartmentChange(e.target.value)}>
               <option value="">Select department</option>
               {departments.map((d) => {
                 return <option key={d.id} value={d.id}>{d.name}</option>;
+              })}
+            </select>
+          </div>
+          <div className="col-12">
+            <label htmlFor="category" className="form-label">
+              Position
+            </label>
+            <select name="category" id="category" className="form-select" value={employee.category_id}
+              onChange={(e) => handlePositionChange(e.target.value)}
+              disabled={!employee.department_id}>
+              <option value="">Select Position</option>
+              {category.map((c) => {
+                return <option key={c.id} value={c.id}>{c.name}</option>;
               })}
             </select>
           </div>

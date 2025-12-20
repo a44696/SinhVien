@@ -110,68 +110,69 @@ const Department = () => {
 
   return (
     <div className="px-5 mt-3">
-      <div className="d-flex justify-content-center">
-        <h3>Department Management</h3>
+      {/* Header + Action bar */}
+      <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
+        <h4 className="mb-0">Department List</h4>
+        <button className="btn btn-primary" onClick={openAddModal}>
+          <i className="bi bi-plus-circle me-1"></i>
+          Add Department
+        </button>
       </div>
 
-      {/* Action bar */}
-      
+      {/* Table Card */}
+      <div className="card shadow-sm">
+        <div className="card-body p-0">
+          <div className="table-responsive">
+            <table className="table table-hover table-striped mb-0">
+              <thead className="">
+                <tr>
+                  <th className="px-4 py-3" style={{ width: 80 }}>ID</th>
+                  <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Description</th>
+                  <th className="px-4 py-3 text-center" style={{ width: 200 }}>Employee Count</th>
+                  <th className="px-4 py-3 text-center" style={{ width: 180 }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {departments.map((dept) => (
+                  <tr key={dept.id}>
+                    <td className="px-4 py-3 align-middle">{dept.id}</td>
+                    <td className="px-4 py-3 align-middle fw-semibold">{dept.name}</td>
+                    <td className="px-4 py-3 align-middle text-muted">{dept.description}</td>
+                    <td className="px-4 py-3 align-middle text-center">
+                      <span className="badge bg-success">{dept.employee_count}</span>
+                    </td>
+                    <td className="px-4 py-3 align-middle text-center" style={{ whiteSpace: 'nowrap' }}>
+                      <button
+                        className="btn btn-sm btn-outline-info me-2"
+                        onClick={() => openEditModal(dept)}
+                      >
+                        <i className="bi bi-pencil-square me-1"></i>
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDelete(dept.id)}
+                      >
+                        <i className="bi bi-trash-fill me-1"></i>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
 
-      {/* List */}
-      <div className="mt-4">
-        <div className="d-flex align-items-center justify-content-between">
-          <h4>Department List</h4>
-          <div className="d-flex justify-content-end mt-3">
-            <button className="btn btn-primary" onClick={openAddModal}>
-              + Add Department
-            </button>
+                {departments.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="text-center py-5 text-muted">
+                      <i className="bi bi-inbox fs-1 d-block mb-2"></i>
+                      <p className="mb-0">No data</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-        
-        
-        <table className="table">
-          <thead>
-            <tr>
-              <th style={{ width: 80 }}>ID</th>
-              <th>Name</th>
-              <th>Description</th>
-              <th style={{ width: 150 }}>Employee Count</th>
-              <th style={{ width: 180 }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {departments.map((dept) => (
-              <tr key={dept.id}>
-                <td>{dept.id}</td>
-                <td>{dept.name}</td>
-                <td>{dept.description}</td>
-                <td>{dept.employee_count}</td>
-                <td>
-                  <button
-                    className="btn btn-info btn-sm me-2"
-                    onClick={() => openEditModal(dept)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="btn btn-warning btn-sm"
-                    onClick={() => handleDelete(dept.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-
-            {departments.length === 0 && (
-              <tr>
-                <td colSpan="5" className="text-center text-muted py-4">
-                  No data
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
       </div>
 
       {/* Modal */}

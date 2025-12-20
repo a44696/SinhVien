@@ -12,7 +12,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.use('/auth', AdminRoute);
+app.use('/admin', AdminRoute);
 app.use('/employee', EmployeeRoute);
 app.use(express.static('Public'));
 app.listen(3000, () => {
