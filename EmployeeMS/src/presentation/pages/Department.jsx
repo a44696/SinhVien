@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { DepartmentService } from "../../application/services"
+import { DepartmentService } from "../../application/services";
 
 const departmentService = new DepartmentService();
 
 const Department = () => {
   const [departments, setDepartments] = useState([]);
+
+  // form state
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+
   const [editMode, setEditMode] = useState(false);
   const [editId, setEditId] = useState(null);
+
+  // modal state
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     loadDepartments();
@@ -17,18 +23,46 @@ const Department = () => {
   const loadDepartments = async () => {
     try {
       const result = await departmentService.getAllDepartments();
-      if (result.Status) {
-        setDepartments(result.Result);
-      } else {
-        alert(result.Error);
-      }
+      if (result.Status) setDepartments(result.Result);
+      else alert(result.Error);
     } catch (err) {
       console.log(err);
     }
-  }
+  };
+
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setEditMode(false);
+    setEditId(null);
+  };
+
+  const openAddModal = () => {
+    resetForm();
+    setShowModal(true);
+  };
+
+  const openEditModal = (dept) => {
+    setName(dept.name ?? "");
+    setDescription(dept.description ?? "");
+    setEditMode(true);
+    setEditId(dept.id);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    resetForm();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!name.trim()) {
+      alert("Department Name is required");
+      return;
+    }
+
     try {
       let result;
       if (editMode) {
@@ -36,13 +70,10 @@ const Department = () => {
       } else {
         result = await departmentService.createDepartment(name, description);
       }
-      
+
       if (result.Status) {
         alert(editMode ? "Department updated successfully" : "Department added successfully");
-        setName("");
-        setDescription("");
-        setEditMode(false);
-        setEditId(null);
+        closeModal();
         loadDepartments();
       } else {
         alert(result.Error);
@@ -52,22 +83,8 @@ const Department = () => {
     }
   };
 
-  const handleEdit = (dept) => {
-    setName(dept.name);
-    setDescription(dept.description || "");
-    setEditMode(true);
-    setEditId(dept.id);
-  }
-
-  const handleCancelEdit = () => {
-    setName("");
-    setDescription("");
-    setEditMode(false);
-    setEditId(null);
-  }
-
   const handleDelete = async (id) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa phòng ban này không?')) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa phòng ban này không?")) {
       try {
         const result = await departmentService.deleteDepartment(id);
         if (result.Status) {
@@ -80,64 +97,32 @@ const Department = () => {
         console.log(err);
       }
     }
-  }
+  };
 
   return (
     <div className="px-5 mt-3">
       <div className="d-flex justify-content-center">
         <h3>Department Management</h3>
       </div>
-      <div className="row">
-        <div className="col-6">
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="name" className="form-label">
-                Department Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="form-control"
-                placeholder="Enter department name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="description" className="form-label">
-                Description
-              </label>
-              <textarea
-                id="description"
-                className="form-control"
-                placeholder="Enter description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows="3"
-              />
-            </div>
-            <button type="submit" className="btn btn-primary me-2">
-              {editMode ? 'Update Department' : 'Add Department'}
-            </button>
-            {editMode && (
-              <button type="button" className="btn btn-secondary" onClick={handleCancelEdit}>
-                Cancel
-              </button>
-            )}
-          </form>
-        </div>
+
+      {/* Action bar */}
+      <div className="d-flex justify-content-end mt-3">
+        <button className="btn btn-primary" onClick={openAddModal}>
+          + Add Department
+        </button>
       </div>
+
+      {/* List */}
       <div className="mt-4">
         <h4>Department List</h4>
         <table className="table">
           <thead>
             <tr>
-              <th>ID</th>
+              <th style={{ width: 80 }}>ID</th>
               <th>Name</th>
               <th>Description</th>
-              <th>Employee Count</th>
-              <th>Actions</th>
+              <th style={{ width: 150 }}>Employee Count</th>
+              <th style={{ width: 180 }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -148,13 +133,13 @@ const Department = () => {
                 <td>{dept.description}</td>
                 <td>{dept.employee_count}</td>
                 <td>
-                  <button 
+                  <button
                     className="btn btn-info btn-sm me-2"
-                    onClick={() => handleEdit(dept)}
+                    onClick={() => openEditModal(dept)}
                   >
                     Edit
                   </button>
-                  <button 
+                  <button
                     className="btn btn-warning btn-sm"
                     onClick={() => handleDelete(dept.id)}
                   >
@@ -163,9 +148,80 @@ const Department = () => {
                 </td>
               </tr>
             ))}
+
+            {departments.length === 0 && (
+              <tr>
+                <td colSpan="5" className="text-center text-muted py-4">
+                  No data
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
+
+      {/* Modal */}
+      {showModal && (
+        <>
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog" aria-modal="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">
+                    {editMode ? "Update Department" : "Add Department"}
+                  </h5>
+                  <button type="button" className="btn-close" onClick={closeModal} />
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                  <div className="modal-body">
+                    <div className="mb-3">
+                      <label htmlFor="deptName" className="form-label">
+                        Department Name
+                      </label>
+                      <input
+                        type="text"
+                        id="deptName"
+                        className="form-control"
+                        placeholder="Enter department name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                      />
+                    </div>
+
+                    <div className="mb-3">
+                      <label htmlFor="deptDesc" className="form-label">
+                        Description
+                      </label>
+                      <textarea
+                        id="deptDesc"
+                        className="form-control"
+                        placeholder="Enter description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        rows="3"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                      Cancel
+                    </button>
+                    <button type="submit" className="btn btn-primary">
+                      {editMode ? "Update" : "Add"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {/* Backdrop */}
+          <div className="modal-backdrop fade show" onClick={closeModal} />
+        </>
+      )}
     </div>
   );
 };

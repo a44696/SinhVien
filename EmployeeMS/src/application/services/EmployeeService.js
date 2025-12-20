@@ -32,7 +32,7 @@ export class EmployeeService {
   }
 
   async getTotalSalary() {
-    const response = await apiClient.get('/salary_count');
+    const response = await apiClient.get('/salary_sum');
     return response.data;
   }
 }

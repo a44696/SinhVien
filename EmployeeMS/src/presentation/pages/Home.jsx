@@ -17,30 +17,38 @@ const Home = () => {
   }, [])
 
   const loadDashboardData = async () => {
-    try {
-      const adminCountResult = await adminService.getAdminCount();
-      if (adminCountResult.Status) {
-        setAdminTotal(adminCountResult.Result[0].admin);
-      }
+  try {
+    console.log("start loadDashboardData");
 
-      const employeeCountResult = await employeeService.getEmployeeCount();
-      if (employeeCountResult.Status) {
-        setemployeeTotal(employeeCountResult.Result[0].employee);
-      }
-
-      const salaryResult = await employeeService.getTotalSalary();
-      if (salaryResult.Status) {
-        setSalaryTotal(salaryResult.Result[0].salaryOFEmp);
-      }
-
-      const adminsResult = await adminService.getAllAdmins();
-      if (adminsResult.Status) {
-        setAdmins(adminsResult.Result);
-      }
-    } catch (err) {
-      console.log(err);
+    const adminCountResult = await adminService.getAdminCount();
+    console.log("admin_count ok", adminCountResult);
+    if (adminCountResult.Status) {
+      setAdminTotal(adminCountResult.Result?.[0]?.admin ?? 0);
     }
+
+    const employeeCountResult = await employeeService.getEmployeeCount();
+    console.log("employee_count ok", employeeCountResult);
+    if (employeeCountResult.Status) {
+      setemployeeTotal(employeeCountResult.Result?.[0]?.employee ?? 0);
+    }
+
+    const salaryResult = await employeeService.getTotalSalary();
+    console.log("salary_sum ok", salaryResult);
+    if (salaryResult.Status) {
+      setSalaryTotal(salaryResult?.Result?.[0]?.total ?? 0);
+    }
+
+    console.log("calling admin_records...");
+    const adminsResult = await adminService.getAllAdmins();
+    console.log("admin_records ok", adminsResult);
+    if (adminsResult.Status) {
+      setAdmins(adminsResult.Result ?? []);
+    }
+  } catch (err) {
+    console.log("loadDashboardData error:", err?.response?.data || err);
   }
+};
+
 
   const handleEditAdmin = (id) => {
     navigate('/dashboard/edit_admin/' + id)
