@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { EmployeeService, CategoryService, DepartmentService } from "../../application/services"
-
+ 
 const employeeService = new EmployeeService();
 const categoryService = new CategoryService();
 const departmentService = new DepartmentService();
-
+ 
 const AddEmployee = () => {
   const [employee, setEmployee] = useState({
     name: "",
@@ -19,12 +19,12 @@ const AddEmployee = () => {
   const [categories, setCategories] = useState([]);
   const [departments, setDepartments] = useState([]);
   const navigate = useNavigate()
-
+ 
   useEffect(() => {
     loadDepartments();
     loadCategories();
   }, []);
-
+ 
   const loadDepartments = async () => {
     try {
       const result = await departmentService.getAllDepartments();
@@ -35,7 +35,7 @@ const AddEmployee = () => {
       console.log(err);
     }
   }
-
+ 
   const loadCategories = async (deptId = null) => {
     try {
       const result = await categoryService.getAllCategories(deptId);
@@ -46,21 +46,21 @@ const AddEmployee = () => {
       console.log(err);
     }
   }
-
+ 
   const handleDepartmentChange = (deptId) => {
     setEmployee({ ...employee, department_id: deptId, category_id: "" });
     loadCategories(deptId);
   }
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    if (!employee.name || !employee.email || !employee.password || !employee.address || 
+ 
+    if (!employee.name || !employee.email || !employee.password || !employee.address ||
         !employee.category_id || !employee.department_id || !employee.image) {
       alert('Please fill all fields')
       return;
     }
-
+ 
     const formData = new FormData();
     formData.append('name', employee.name);
     formData.append('email', employee.email);
@@ -69,21 +69,29 @@ const AddEmployee = () => {
     formData.append('image', employee.image);
     formData.append('category_id', employee.category_id);
     formData.append('department_id', employee.department_id);
-
+ 
     try {
       const result = await employeeService.createEmployee(formData);
       if (result.Status) {
         alert('Employee added successfully')
         navigate('/dashboard/employee')
       } else {
-        alert(result.Error)
+        if (result.Error && result.Error.includes('Duplicate entry')) {
+          alert("Email already exists! Please use a different email.");
+        } else {
+          alert(result.Error || "An error occurred");
+        }
       }
     } catch (err) {
       console.log(err)
-      alert('Error adding employee')
+      if (err.response?.data?.Error?.includes('Duplicate entry')) {
+      alert("Email already exists! Please use a different email.");
+    } else {
+      alert("An error occurred while saving employee");
+    }
     }
   }
-
+ 
   return (
     <div className="d-flex justify-content-center align-items-center mt-3">
       <div className="p-3 rounded w-50 border">
@@ -176,5 +184,6 @@ const AddEmployee = () => {
     </div>
   );
 };
-
+ 
 export default AddEmployee;
+ 

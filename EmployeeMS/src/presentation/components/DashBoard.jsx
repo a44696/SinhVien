@@ -77,15 +77,6 @@ const DashBoard = () => {
                 </Link>
               </li>
               <li className="w-100">
-                <Link
-                  to="/dashboard/profile"
-                  className="nav-link px-0 align-middle text-white"
-                >
-                  <i className="fs-4 bi-person ms-2"></i>
-                  <span className="ms-2 d-none d-sm-inline">Profile</span>
-                </Link>
-              </li>
-              <li className="w-100">
                 <button
                   className="nav-link px-0 align-middle text-white border-0 bg-transparent w-100 text-start"
                   onClick={handleLogout}

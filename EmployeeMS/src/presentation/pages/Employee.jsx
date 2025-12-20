@@ -80,7 +80,7 @@ const Employee = () => {
               <th>Image</th>
               <th>Email</th>
               <th>Address</th>
-              <th>Salary</th>
+              <th>Department</th>
               <th style={{ width: 200 }}>Action</th>
             </tr>
           </thead>
@@ -98,7 +98,7 @@ const Employee = () => {
                 </td>
                 <td>{e.email}</td>
                 <td>{e.address}</td>
-                <td>{e.salary}</td>
+                <td>{e.department_name}</td>
                 <td>
                   <Link
                     to={`/dashboard/view_employee/${e.id}`}

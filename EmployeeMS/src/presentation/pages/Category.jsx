@@ -153,9 +153,9 @@ const Category = () => {
     <div className="px-5 mt-3">
 
       {/* Filter + Action bar */}
-      <div className="d-flex align-items-end justify-content-between flex-wrap gap-3 mb-4 mt-5">
+      <div className="d-flex align-items-end flex-wrap gap-3 mb-4 mt-5">
         <h4>Position List</h4>
-        <div style={{ minWidth: 320 }}>
+        <div style={{ minWidth: 320 }} className="ml-72">
           <select
             id="departmentFilter"
             className="form-select"

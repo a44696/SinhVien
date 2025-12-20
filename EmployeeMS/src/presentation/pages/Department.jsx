@@ -76,10 +76,19 @@ const Department = () => {
         closeModal();
         loadDepartments();
       } else {
-        alert(result.Error);
+        if (result.Error && result.Error.includes('Duplicate entry')) {
+        alert("Department name already exists! Please use a different name.");
+      } else {
+        alert(result.Error || "An error occurred");
+      }
       }
     } catch (err) {
       console.log(err);
+      if (err.response?.data?.Error?.includes('Duplicate entry')) {
+        alert("Department name already exists! Please use a different name.");
+      } else {
+        alert("An error occurred while saving department");
+      }
     }
   };
 
@@ -106,15 +115,20 @@ const Department = () => {
       </div>
 
       {/* Action bar */}
-      <div className="d-flex justify-content-end mt-3">
-        <button className="btn btn-primary" onClick={openAddModal}>
-          + Add Department
-        </button>
-      </div>
+      
 
       {/* List */}
       <div className="mt-4">
-        <h4>Department List</h4>
+        <div className="d-flex align-items-center justify-content-between">
+          <h4>Department List</h4>
+          <div className="d-flex justify-content-end mt-3">
+            <button className="btn btn-primary" onClick={openAddModal}>
+              + Add Department
+            </button>
+          </div>
+        </div>
+        
+        
         <table className="table">
           <thead>
             <tr>

@@ -106,36 +106,60 @@ const Home = () => {
         </div>
       </div>
       <div className='mt-4 px-5 pt-3'>
-        <h3>List of Admins</h3>
-        <table className='table'>
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              admins.map(a => (
-                <tr key={a.id}>
-                  <td>{a.email}</td>
-                  <td>
-                    <button
-                      className="btn btn-info btn-sm me-2"
-                      onClick={() => handleEditAdmin(a.id)}>
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-warning btn-sm"
-                      onClick={() => handleDeleteAdmin(a.id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
+        <div className='d-flex justify-content-between align-items-center mb-3'>
+          <h3 className='mb-0'>List of Admins</h3>
+        </div>
+        <div className='card shadow-sm'>
+          <div className='card-body p-0'>
+            <div className='table-responsive'>
+              <table className='table table-hover table-striped mb-0'>
+                <thead className=''>
+                  <tr>
+                    <th className='px-4 py-3'>ID</th>
+                    <th className='px-4 py-3'>Email</th>
+                    <th className='px-4 py-3 text-center'>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {admins.length > 0 ? (
+                    admins.map((a, index) => (
+                      <tr key={a.id}>
+                        <td className='px-4 py-3 align-middle'>{index + 1}</td>
+                        <td className='px-4 py-3 align-middle'>
+                          <i className="bi bi-envelope-fill me-2 text-primary"></i>
+                          {a.email}
+                        </td>
+                        <td className='px-4 py-3 align-middle text-center'>
+                          <button
+                            className="btn btn-sm btn-outline-info me-2"
+                            onClick={() => handleEditAdmin(a.id)}
+                          >
+                            <i className="bi bi-pencil-square me-1"></i>
+                            Edit
+                          </button>
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDeleteAdmin(a.id)}
+                          >
+                            <i className="bi bi-trash-fill me-1"></i>
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="3" className="text-center py-5 text-muted">
+                        <i className="bi bi-inbox fs-1 d-block mb-2"></i>
+                        <p className="mb-0">No admins found</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
