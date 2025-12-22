@@ -109,4 +109,114 @@ router.get('/leave_requests/:id', (req, res) => {
     })
 });
 
+// Change Password
+router.post('/change_password/:id', (req, res) => {
+    const employeeId = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+
+    // Get employee from database
+    const sql = "SELECT * FROM employee WHERE id = ?";
+    con.query(sql, [employeeId], (err, result) => {
+        if (err) {
+            return res.json({ Status: false, Error: "Query Error" });
+        }
+
+        if (result.length === 0) {
+            return res.json({ Status: false, Error: "Employee not found" });
+        }
+
+        const employee = result[0];
+
+        // Compare current password with stored password
+        bcrypt.compare(currentPassword, employee.password, (err, isPasswordMatch) => {
+            if (err) {
+                return res.json({ Status: false, Error: "Password comparison error" });
+            }
+
+            if (!isPasswordMatch) {
+                return res.json({ Status: false, Error: "Mật khẩu hiện tại không chính xác" });
+            }
+
+            // Hash new password
+            bcrypt.hash(newPassword, 10, (err, hashedPassword) => {
+                if (err) {
+                    return res.json({ Status: false, Error: "Password hashing error" });
+                }
+
+                // Update password in database
+                const updateSql = "UPDATE employee SET password = ? WHERE id = ?";
+                con.query(updateSql, [hashedPassword, employeeId], (err, result) => {
+                    if (err) {
+                        return res.json({ Status: false, Error: "Failed to update password" });
+                    }
+                    return res.json({ Status: true, Message: "Password changed successfully" });
+                });
+            });
+        });
+    });
+});
+
+// Update Leave Request (only when status is pending)
+router.put('/leave_request/:id', (req, res) => {
+    const leaveRequestId = req.params.id;
+    const { leave_type, start_date, end_date, reason } = req.body;
+
+    // Check if request is still pending
+    const checkSql = "SELECT status FROM leave_request WHERE id = ?";
+    con.query(checkSql, [leaveRequestId], (err, result) => {
+        if(err) {
+            return res.json({Status: false, Error: "Query Error"})
+        }
+        
+        if(result.length === 0) {
+            return res.json({Status: false, Error: "Leave request not found"})
+        }
+
+        if(result[0].status !== 'pending') {
+            return res.json({Status: false, Error: "Can only edit pending leave requests"})
+        }
+
+        // Update the leave request
+        const updateSql = "UPDATE leave_request SET leave_type = ?, start_date = ?, end_date = ?, reason = ? WHERE id = ?";
+        con.query(updateSql, [leave_type, start_date, end_date, reason, leaveRequestId], (err, result) => {
+            if(err) {
+                console.log(err);
+                return res.json({Status: false, Error: "Query Error"})
+            }
+            return res.json({Status: true, Message: "Leave request updated successfully"})
+        })
+    })
+});
+
+// Delete Leave Request (only when status is pending)
+router.delete('/leave_request/:id', (req, res) => {
+    const leaveRequestId = req.params.id;
+
+    // Check if request is still pending
+    const checkSql = "SELECT status FROM leave_request WHERE id = ?";
+    con.query(checkSql, [leaveRequestId], (err, result) => {
+        if(err) {
+            return res.json({Status: false, Error: "Query Error"})
+        }
+        
+        if(result.length === 0) {
+            return res.json({Status: false, Error: "Leave request not found"})
+        }
+
+        if(result[0].status !== 'pending') {
+            return res.json({Status: false, Error: "Can only delete pending leave requests"})
+        }
+
+        // Delete the leave request
+        const deleteSql = "DELETE FROM leave_request WHERE id = ?";
+        con.query(deleteSql, [leaveRequestId], (err, result) => {
+            if(err) {
+                console.log(err);
+                return res.json({Status: false, Error: "Query Error"})
+            }
+            return res.json({Status: true, Message: "Leave request deleted successfully"})
+        })
+    })
+});
+
 export { router as EmployeeRoute };

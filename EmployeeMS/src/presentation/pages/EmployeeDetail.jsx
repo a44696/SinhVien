@@ -72,14 +72,14 @@ const EmployeeDetail = () => {
             {/* Header */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
                 <div className="container-fluid px-4">
-                    <span className="navbar-brand mb-0 h1">
+                    {/* <span className="navbar-brand mb-0 h1">
                         <i className="bi bi-building me-2"></i>
                         Employee Management System
-                    </span>
-                    <button className="btn btn-outline-light" onClick={handleLogout}>
+                    </span> */}
+                    {/* <button className="btn btn-outline-light" onClick={handleLogout}>
                         <i className="bi bi-box-arrow-right me-2"></i>
                         Logout
-                    </button>
+                    </button> */}
                 </div>
             </nav>
 

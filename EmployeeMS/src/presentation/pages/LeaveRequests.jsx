@@ -5,6 +5,7 @@ const LeaveRequests = () => {
   const [leaveRequests, setLeaveRequests] = useState([])
   const [loading, setLoading] = useState(false)
   const [filterStatus, setFilterStatus] = useState('all')
+  const [searchEmployee, setSearchEmployee] = useState('')
   const [selectedRequest, setSelectedRequest] = useState(null)
   const [showModal, setShowModal] = useState(false)
   const [action, setAction] = useState('')
@@ -18,6 +19,7 @@ const LeaveRequests = () => {
     try {
       const result = await axios.get('http://localhost:3000/admin/all_leave_requests')
       if (result.data.Status) {
+        console.log('Leave requests loaded:', result.data.Result)
         setLeaveRequests(result.data.Result)
       } else {
         alert(result.data.Error)
@@ -31,8 +33,11 @@ const LeaveRequests = () => {
   }
 
   const filteredRequests = leaveRequests.filter((req) => {
-    if (filterStatus === 'all') return true
-    return req.status === filterStatus
+    const statusMatch = filterStatus === 'all' || req.status === filterStatus
+    const employeeName = (req.employee_name || '').toString().toLowerCase()
+    const searchText = searchEmployee.toLowerCase()
+    const employeeMatch = employeeName.includes(searchText)
+    return statusMatch && employeeMatch
   })
 
   const handleApproveClick = (request) => {
@@ -100,26 +105,51 @@ const LeaveRequests = () => {
 
   return (
     <div className="px-5 mt-3">
-      <div className="d-flex justify-content-center">
-        <h3>Leave Request Management</h3>
-      </div>
-
       {/* Filter Section */}
-      <div className="d-flex justify-content-between align-items-center mb-4 mt-4">
-        <h4 className="mb-0">All Leave Requests</h4>
-        <div className="d-flex align-items-center gap-2">
-          <label className="form-label mb-0 me-2">Filter by Status:</label>
-          <select
-            className="form-select"
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            style={{ width: 'auto' }}
-          >
-            <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
+      <div className="mb-4 mt-5">
+        <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <h4 className="mb-0">All Leave Requests</h4>
+
+          <div style={{ minWidth: 320, maxWidth: 520, width: "100%" }}>
+            <div className="input-group">
+              <span className="input-group-text">
+                <i className="bi bi-search"></i>
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Tìm kiếm theo tên nhân viên..."
+                value={searchEmployee}
+                onChange={(e) => setSearchEmployee(e.target.value)}
+              />
+              {searchEmployee && (
+                <button
+                  className="btn btn-outline-secondary"
+                  type="button"
+                  onClick={() => setSearchEmployee("")}
+                  title="Xoá tìm kiếm"
+                >
+                  <i className="bi bi-x"></i>
+                </button>
+              )}
+            </div>         
+        </div>
+          {/* <div className="col-md-6">
+            <div className="d-flex align-items-center gap-2">
+              <label className="form-label mb-0 me-2"> trạng thái:</label>
+              <select
+                className="form-select"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                style={{ width: 'auto' }}
+              >
+                  <option value="all">All</option>
+                  <option value="pending">pending</option>
+                <option value="approved">approve</option>
+                <option value="rejected">reject</option>
+              </select>
+            </div>
+          </div> */}
         </div>
       </div>
 

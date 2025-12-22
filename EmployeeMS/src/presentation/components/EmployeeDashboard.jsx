@@ -16,10 +16,10 @@ const EmployeeDashboard = () => {
   return (
     <div className="container-fluid">
       <div className="row flex-nowrap">
-        <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-info">
+        <div className="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-info bg-sky-600">
           <div className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
             <Link
-              to={`/employee_dashboard/${id}`}
+              to={`/employee_dashboard/${id}/profile`}
               className="d-flex align-items-center pb-3 mb-md-1 mt-md-3 me-md-auto text-white text-decoration-none"
             >
               <span className="fs-5 fw-bolder d-none d-sm-inline">
@@ -46,6 +46,15 @@ const EmployeeDashboard = () => {
                 >
                   <i className="fs-4 bi-calendar-x ms-2"></i>
                   <span className="ms-2 d-none d-sm-inline">Register Leave</span>
+                </Link>
+              </li>
+              <li className="w-100">
+                <Link
+                  to={`/employee_dashboard/${id}/change_password`}
+                  className="nav-link px-0 align-middle text-white"
+                >
+                  <i className="fs-4 bi-key ms-2"></i>
+                  <span className="ms-2 d-none d-sm-inline">Change Password</span>
                 </Link>
               </li>
               <li className="w-100">

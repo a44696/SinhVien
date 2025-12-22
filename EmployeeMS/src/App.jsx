@@ -22,6 +22,7 @@ import Start from './presentation/pages/Start';
 import EmployeeLogin from './presentation/pages/EmployeeLogin';
 import EmployeeDetail from './presentation/pages/EmployeeDetail';
 import EmployeeLeaveRequest from './presentation/pages/EmployeeLeaveRequest';
+import ChangePassword from './presentation/pages/ChangePassword';
 import PrivateRoute from './presentation/pages/PrivateRoute';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/employee_dashboard/:id" element={<EmployeeDashboard />}>
           <Route path='profile' element={<EmployeeDetail />}></Route>
           <Route path='leave' element={<EmployeeLeaveRequest />}></Route>
+          <Route path='change_password' element={<ChangePassword />}></Route>
         </Route>
         <Route path="/dashboard" element={
           <PrivateRoute >
